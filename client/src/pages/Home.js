@@ -10,7 +10,7 @@ function Home() {
   const handleLogout = () => {
     setUser({});
     axios
-      .get('http://localhost:5000/api/auth/logout', { withCredentials: true })
+      .get('http://localhost:5000/api/user/logout', { withCredentials: true })
       .then((res) => {
         navigate('/login');
       })
@@ -22,7 +22,7 @@ function Home() {
   useEffect(() => {
     const fetchUser = () => {
       axios
-        .get('http://localhost:5000/api/auth/user', { withCredentials: true })
+        .get('http://localhost:5000/api/user/user', { withCredentials: true })
         .then((res) => setUser(res.data))
         .catch((err) => {
           console.log(err);

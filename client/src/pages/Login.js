@@ -5,6 +5,7 @@ import axios from 'axios';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -12,14 +13,14 @@ function Login() {
     e.preventDefault();
 
     axios
-      .post('http://localhost:5000/api/auth/login', { email, password }, {withCredentials: true})
+      .post('http://localhost:5000/api/user/login', { email, password }, {withCredentials: true})
       .then((res) => {
         if (res.data.userId) {
           navigate('/');
         }
       })
       .catch((err) => {
-        console.log(err);
+        setErrorMessage(err.response.data.error);
       });
   };
 
@@ -45,6 +46,7 @@ function Login() {
         <br />
         <button type='submit'>Se connecter</button>
       </form>
+      <div>{errorMessage}</div>
       <span>Pas encore de compte ?</span>
       <Link to='/register'>S'enregistrer</Link>
     </div>

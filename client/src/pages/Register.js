@@ -6,13 +6,14 @@ function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/auth/register',
+      url: 'http://localhost:5000/api/user/register',
       withCredentials: true,
       data: { username, email, password },
     })
@@ -20,7 +21,7 @@ function Register() {
         console.log(res);
       })
       .catch((err) => {
-        console.log(err);
+        setErrorMessage(err.response.data.error);
       });
   };
 
@@ -54,6 +55,7 @@ function Register() {
         <br />
         <button type='submit'>S'enregister</button>
       </form>
+      <div>{errorMessage}</div>
       <span>Déjà un compte ?</span>
       <Link to='/login'>Se Connecter</Link>
     </div>

@@ -5,8 +5,8 @@ module.exports = (req, res, next) => {
   try {
     const token = req.cookies.jwt;
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-    const {userId, role} = decodedToken;
-    req.auth = {userId, role}
+    const {userId, isAdmin} = decodedToken;
+    req.auth = {userId, isAdmin}
     next()
   } catch (error) {
     return res.status(401).json({message: 'Requête non authentifiée'})
