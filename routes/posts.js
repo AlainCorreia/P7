@@ -6,9 +6,8 @@ const multer = require('../middleware/multer-config');
 
 router.post('/', verifyToken, multer, postCtrl.createPost);
 router.get('/', verifyToken, postCtrl.getPosts);
-
-// router.post('/login', userCtrl.login);
-// router.get('/logout', verifyToken, userCtrl.logout);
-// router.get('/user', verifyToken, userCtrl.getUser);
+router.patch('/:id', verifyToken, multer, postCtrl.updatePost);
+router.post('/:id/like', verifyToken, postCtrl.likePost);
+router.delete('/:id', verifyToken, postCtrl.deletePost);
 
 module.exports = router;
