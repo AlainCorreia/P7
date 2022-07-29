@@ -70,6 +70,7 @@ exports.login = (req, res, next) => {
           res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
           res.status(200).json({
             userId: user._id,
+            username: user.username
           });
         })
         .catch((error) => res.status(500).json({ error }));
