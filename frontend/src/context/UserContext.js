@@ -5,6 +5,7 @@ const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = () => {
@@ -15,13 +16,14 @@ const UserContextProvider = ({ children }) => {
         })
         .catch((err) => {
           console.log(err);
-        });
+        })
+        .finally(() => setIsLoading(false));
     };
     fetchUser();
   }, []);
 
   return (
-    <UserContext.Provider value={[user, setUser]}>
+    <UserContext.Provider value={[user, setUser, isLoading]}>
       {children}
     </UserContext.Provider>
   )

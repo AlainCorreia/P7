@@ -34,7 +34,7 @@ export const StyledButton = styled.button`
   }
 
   &:focus {
-    outline: 2px dashed ${colors.tertiary};
+    outline: 2px solid ${colors.tertiary};
   }
 `;
 

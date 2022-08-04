@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../context/UserContext';
 import LoginForm from '../../components/LoginForm';
+import Header from '../../components/Header';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [user, setUser] = useContext(UserContext)
+  const [user, setUser, isLoading] = useContext(UserContext)
 
   const navigate = useNavigate();
 
@@ -41,7 +42,9 @@ const Login = () => {
   };
 
   return (
+    isLoading ? <h1>...Loading</h1> :
     <>
+      <Header page='login' />
       <LoginForm
         handleSubmit={handleSubmit}
         setEmail={setEmail}

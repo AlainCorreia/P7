@@ -20,6 +20,14 @@ const PostsContainer = () => {
     fetchPosts();
   }, []);
 
+  const removePost = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => {
+        return post.id !== postId;
+      })
+    );
+  };
+
   return (
     <StyledPostsContainer>
       {posts.map((post) => (
@@ -29,9 +37,10 @@ const PostsContainer = () => {
           authorName={post.author.username}
           authorId={post.author._id}
           text={post.text}
-          likes={post.likes.length}
+          likes={post.likes}
           image={post.pictureUrl}
           date={post.createdAt}
+          removePost={removePost}
         />
       ))}
     </StyledPostsContainer>

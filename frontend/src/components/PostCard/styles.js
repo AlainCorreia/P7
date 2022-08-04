@@ -25,7 +25,7 @@ export const StyledPostUsername = styled.p`
 
 export const StyledPostDate = styled.p`
   font-style: italic;
-  font-weight: 300;
+  font-weight: 400;
 `
 
 export const StyledPostText = styled.p`
@@ -36,12 +36,43 @@ export const StyledPostText = styled.p`
 export const StyledImgContainer = styled.div`
   margin: 0 auto;
   width: 80%;
-  max-width: 760px;
-  max-height: 760px;
 `
 
 export const StyledImg = styled.img`
+  display: block;
+  margin: auto;
   width: 100%;
   height: 100%;
+  max-width: 760px;
+  max-height: 760px;
   object-fit: contain;
 `
+
+export const StyledPostFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin: 12px 0;
+`
+
+export const StyledPostButton = styled.button`
+  padding: 4px 8px;
+  margin-right: 8px;
+  background-color: ${colors.tertiary};
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Lato', sans-serif;
+
+  &:hover {
+    box-shadow: 2px 2px 2px ${colors.tertiary};
+  }
+
+  &:focus {
+    outline: 2px solid #000000;
+  }
+`;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import RegisterForm from '../../components/RegisterForm';
+import Header from '../../components/Header';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -26,14 +27,17 @@ const Register = () => {
   };
 
   return (
-    <RegisterForm
-      handleSubmit={handleSubmit}
-      setUsername={setUsername}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      errorMessage={errorMessage}
-      setErrorMessage={setErrorMessage}
-    />
+    <>
+      <Header page='register' />
+      <RegisterForm
+        handleSubmit={handleSubmit}
+        setUsername={setUsername}
+        setEmail={setEmail}
+        setPassword={setPassword}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    </>
   );
 };
 
