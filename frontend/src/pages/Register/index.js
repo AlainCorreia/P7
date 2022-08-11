@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { api } from '../../utils/api';
 import RegisterForm from '../../components/RegisterForm';
 import Header from '../../components/Header';
 
@@ -8,18 +9,15 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios({
-      method: 'POST',
-      url: 'http://localhost:5000/api/auth/register',
-      withCredentials: true,
-      data: { username, email, password },
-    })
+    api
+      .post('auth/register', { username, email, password })
       .then((res) => {
-        console.log(res);
+        navigate('/login');
       })
       .catch((err) => {
         setErrorMessage(err.response.data.error);
@@ -28,7 +26,7 @@ const Register = () => {
 
   return (
     <>
-      <Header page='register' />
+      <Header page="register" />
       <RegisterForm
         handleSubmit={handleSubmit}
         setUsername={setUsername}

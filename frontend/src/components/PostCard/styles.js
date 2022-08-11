@@ -4,9 +4,9 @@ import colors from '../../utils/style/colors';
 export const StyledCard = styled.div`
   margin: 16px auto;
   width: 90%;
-  border: 2px solid ${colors.tertiary};
+  border: 2px solid ${props => props.isDeleteMode || props.isEditMode ? colors.primary : colors.tertiary};
   border-radius: 8px;
-  background-color: white;
+  background-color: #FFFFFF;
   padding: 4px;
 `
 
@@ -19,7 +19,7 @@ export const StyledPostHeader = styled.header`
 `
 
 export const StyledPostUsername = styled.p`
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
 `
 
@@ -51,8 +51,9 @@ export const StyledImg = styled.img`
 export const StyledPostFooter = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 8px;
-  margin: 12px 0;
+  margin: 20px 0 12px;
 `
 
 export const StyledPostButton = styled.button`
@@ -76,3 +77,36 @@ export const StyledPostButton = styled.button`
     outline: 2px solid #000000;
   }
 `;
+
+export const StyledEditTextArea = styled.textarea`
+  resize: none;
+  width: 100%;
+  outline: 2px solid ${colors.tertiary};
+  padding: 16px;
+  font-family: inherit;
+  font-size: 17px;
+  border: none;
+  border-radius: 5px;
+  margin: 16px 2px;
+
+  &:focus {
+    outline: 2px solid ${colors.primary};
+  }
+`;
+
+export const StyledLikeContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid ${colors.tertiary};
+  border-radius: 5px;
+
+  &:hover {
+    border: 1px solid ${colors.primary}
+  }
+`
+export const StyledLikeImg = styled.img`
+  width: 22px;
+  margin-right: 8px;
+`

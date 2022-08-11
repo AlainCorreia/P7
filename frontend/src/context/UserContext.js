@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../utils/api';
 
 const UserContext = createContext();
 
@@ -9,10 +9,10 @@ const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = () => {
-      axios
-        .get('http://localhost:5000/api/auth/user', { withCredentials: true })
+      api
+        .get('auth/user')
         .then((res) => {
-          setUser(res.data)
+          setUser(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -26,7 +26,7 @@ const UserContextProvider = ({ children }) => {
     <UserContext.Provider value={[user, setUser, isLoading]}>
       {children}
     </UserContext.Provider>
-  )
-}
+  );
+};
 
 export { UserContext, UserContextProvider };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../../utils/api';
 import { UserContext } from '../../context/UserContext';
 import LoginForm from '../../components/LoginForm';
 import Header from '../../components/Header';
@@ -10,29 +10,24 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [user, setUser, isLoading] = useContext(UserContext)
+  const [user, setUser, isLoading] = useContext(UserContext);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(user.username) {
-      navigate('/')
+    if (user.username) {
+      navigate('/');
     }
-  }, [navigate, user.username])
+  }, [navigate, user.username]);
 
   const handleSubmit = (e) => {
-
     e.preventDefault();
 
-    axios
-      .post(
-        'http://localhost:5000/api/auth/login',
-        { email, password },
-        { withCredentials: true }
-      )
+    api
+      .post('auth/login', { email, password })
       .then((res) => {
         if (res.data.userId) {
-          setUser(res.data)
+          setUser(res.data);
           navigate('/');
         }
       })
@@ -41,10 +36,11 @@ const Login = () => {
       });
   };
 
-  return (
-    isLoading ? <h1>...Loading</h1> :
+  return isLoading ? (
+    <h1>...Loading</h1>
+  ) : (
     <>
-      <Header page='login' />
+      <Header page="login" />
       <LoginForm
         handleSubmit={handleSubmit}
         setEmail={setEmail}

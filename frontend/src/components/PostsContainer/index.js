@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../../utils/api';
 import PostCard from '../PostCard';
 import { StyledPostsContainer } from './styles';
 
@@ -8,8 +8,8 @@ const PostsContainer = () => {
 
   useEffect(() => {
     const fetchPosts = () => {
-      axios
-        .get('http://localhost:5000/api/posts', { withCredentials: true })
+      api
+        .get('posts')
         .then((res) => {
           setPosts(res.data);
         })
@@ -23,7 +23,15 @@ const PostsContainer = () => {
   const removePost = (postId) => {
     setPosts((prevPosts) =>
       prevPosts.filter((post) => {
-        return post.id !== postId;
+        return post._id !== postId;
+      })
+    );
+  };
+
+  const updatePost = (data) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        return post._id !== data._id ? post : { ...data, author: post.author };
       })
     );
   };
@@ -41,6 +49,7 @@ const PostsContainer = () => {
           image={post.pictureUrl}
           date={post.createdAt}
           removePost={removePost}
+          updatePost={updatePost}
         />
       ))}
     </StyledPostsContainer>

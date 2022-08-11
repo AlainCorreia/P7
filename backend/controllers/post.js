@@ -14,7 +14,7 @@ exports.createPost = (req, res) => {
   });
   post
     .save()
-    .then((docs) => res.status(201).json({ message: 'Post enregistré.', docs}))
+    .then((docs) => res.status(201).json({ message: 'Post enregistré.', docs }))
     .catch((error) => res.status(400).json({ error }));
 };
 
@@ -33,7 +33,7 @@ exports.updatePost = async (req, res, next) => {
     if (req.file) {
       const postObject = {
         text: req.body.text,
-        pictureUrl: `${req.protocol}://${req.get('host')}/images/${
+        pictureUrl: `${req.protocol}://${req.get('host')}/images/posts/${
           req.file.filename
         }`,
       };
@@ -48,31 +48,60 @@ exports.updatePost = async (req, res, next) => {
       if (post.pictureUrl) {
         const filename = post.pictureUrl.split('/posts/')[1];
         fs.unlink(`images/posts/${filename}`, () => {
-          Post.updateOne(
-            { _id: req.params.id },
-            { ...postObject, _id: req.params.id }
+          Post.findByIdAndUpdate(
+            req.params.id,
+            { ...postObject, _id: req.params.id },
+            { new: true }
           )
-            .then(() => res.status(200).json({ message: 'Post modifié.' }))
+            .then((docs) =>
+              res.status(200).json({ message: 'Post modifié.', docs })
+            )
             .catch((error) => res.status(400).json({ error }));
         });
       } else {
-        Post.updateOne(
-          { _id: req.params.id },
-          { ...postObject, _id: req.params.id }
+        Post.findByIdAndUpdate(
+          req.params.id,
+          { ...postObject, _id: req.params.id },
+          { new: true }
         )
-          .then(() => res.status(200).json({ message: 'Post modifié.' }))
+          .then((docs) =>
+            res.status(200).json({ message: 'Post modifié.', docs })
+          )
           .catch((error) => res.status(400).json({ error }));
       }
     } else {
       if (post.author._id != req.auth.userId && !req.auth.isAdmin) {
         return res.status(403).json({ error: 'Requête non autorisée.' });
       } else {
-        Post.updateOne(
-          { _id: req.params.id },
-          { text: req.body.text, _id: req.params.id }
-        )
-          .then(() => res.status(200).json({ message: 'Post modifié.' }))
-          .catch((error) => res.status(400).json({ error }));
+        if (post.pictureUrl && !req.body.image) {
+          const filename = post.pictureUrl.split('/posts/')[1];
+          fs.unlink(`images/posts/${filename}`, () => {
+            Post.findByIdAndUpdate(
+              req.params.id,
+              { text: req.body.text, pictureUrl: '', _id: req.params.id },
+              { new: true }
+            )
+              .then((docs) =>
+                res.status(200).json({ message: 'Post modifié.', docs })
+              )
+              .catch((error) => res.status(400).json({ error }));
+          });
+        } else {
+          console.log(req.body);
+          Post.findByIdAndUpdate(
+            req.params.id,
+            {
+              text: req.body.text,
+              pictureUrl: req.body.image,
+              _id: req.params.id,
+            },
+            { new: true }
+          )
+            .then((docs) =>
+              res.status(200).json({ message: 'Post modifié.', docs })
+            )
+            .catch((error) => res.status(400).json({ error }));
+        }
       }
     }
   } catch (error) {
@@ -86,14 +115,17 @@ exports.likePost = async (req, res, next) => {
     switch (req.body.like) {
       case 0:
         if (post.likes.includes(req.auth.userId)) {
-          Post.updateOne(
-            { _id: req.params.id },
+          Post.findByIdAndUpdate(
+            req.params.id,
             {
               $pull: { likes: req.auth.userId },
               _id: req.params.id,
-            }
+            },
+            { new: true }
           )
-            .then(() => res.status(201).json({ message: 'Like annulé.' }))
+            .then((docs) =>
+              res.status(201).json({ message: 'Like annulé.', docs })
+            )
             .catch((error) => res.status(400).json({ error }));
         } else {
           return res.status(400).json({ error: 'Requête invalide.' });
@@ -103,14 +135,17 @@ exports.likePost = async (req, res, next) => {
         if (post.likes.includes(req.auth.userId)) {
           return res.status(400).json({ error: 'Post déjà liké.' });
         } else {
-          Post.updateOne(
-            { _id: req.params.id },
+          Post.findByIdAndUpdate(
+            req.params.id,
             {
               $push: { likes: req.auth.userId },
               _id: req.params.id,
-            }
+            },
+            { new: true }
           )
-            .then(() => res.status(201).json({ message: 'Post liké.' }))
+            .then((docs) =>
+              res.status(201).json({ message: 'Post liké.', docs })
+            )
             .catch((error) => res.status(400).json({ error }));
         }
         break;

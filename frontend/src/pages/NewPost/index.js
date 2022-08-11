@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../../utils/api';
 import Header from '../../components/Header';
 import {
   StyledNewPostContainer,
@@ -26,7 +26,6 @@ const NewPost = () => {
     }
   }, [user.username, navigate, isLoading]);
 
-
   const handlePicture = (e) => {
     setPostPicture(URL.createObjectURL(e.target.files[0]));
     setFile(e.target.files[0]);
@@ -43,28 +42,27 @@ const NewPost = () => {
       data.append('text', messageText);
       if (file) data.append('image', file);
 
-      axios
-        .post('http://localhost:5000/api/posts', data, {
-          withCredentials: true,
-        })
+      api
+        .post('posts', data)
         .then(() => navigate('/home'))
         .catch((err) => console.log(err));
     }
   };
 
-  return (
-    isLoading ? <h1>Loading...</h1> :
+  return isLoading ? (
+    <h1>Loading...</h1>
+  ) : (
     <>
-      <Header page='newpost' />
+      <Header page="newpost" />
       <StyledNewPostContainer>
         <StyledTextArea
-          name='text'
-          id='text'
-          rows='12'
+          name="text"
+          id="text"
+          rows="12"
           autoFocus
           onChange={(e) => setMessageText(e.target.value)}
         />
-        {file && <StyledNewPostImg src={postPicture} alt='' />}
+        {file && <StyledNewPostImg src={postPicture} alt="" />}
         <StyledSelectImgButton onClick={() => fileInput.current.click()}>
           {file ? "Modifier l'image" : 'Ajouter une image'}
         </StyledSelectImgButton>
@@ -74,7 +72,7 @@ const NewPost = () => {
           </StyledSelectImgButton>
         )}
         <StyledNewPostInput
-          type='file'
+          type="file"
           ref={fileInput}
           onChange={(e) => handlePicture(e)}
         />
