@@ -24,8 +24,8 @@ export const StyledButton = styled.button`
   width: 100%;
   cursor: pointer;
   background-color: ${colors.primary};
-  color: white;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 900;
   font-size: 20px;
   font-family: 'Lato', sans-serif;
 
@@ -45,6 +45,7 @@ export const StyledFormContainer = styled.div`
   flex-direction: column;
   gap: 10px;
   height: 100vh;
+  padding: 0 3px;
 `;
 
 export const StyledFormContent = styled.div`
@@ -60,7 +61,7 @@ export const StyledFormContent = styled.div`
   max-width: 400px;
 `;
 
-export const StyledFormTitle = styled.p`
+export const StyledFormTitle = styled.h1`
   font-size: 20px;
   font-weight: 600;
   color: white;
@@ -71,7 +72,10 @@ export const StyledLabel = styled.label`
 `
 
 export const StyledErrorMessage = styled.div`
-  padding-top: 16px;
+  padding: ${(props) =>
+      props.page === 'newpost'
+        ? '0 0 16px'
+        : '16px 0 0'};
   color: ${colors.primary};
   font-size: 18px;
 `
@@ -88,3 +92,36 @@ export const StyledFormLink = styled(Link)`
     font-weight: 700;
   }
 `
+export const StyledNewPostImg = styled.img`
+  display: block;
+  width: 400px;
+  max-width: 100%;
+  max-height: 400px;
+`;
+
+export const StyledSelectImgButton = styled.button`
+  background-color: ${colors.tertiary};
+  padding: 8px 12px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Lato', sans-serif;
+  margin: 12px 20px 20px 0;
+
+  @media (max-width: 430px) {
+    font-size: 15px;
+    margin-right: 16px;
+  }
+
+  &:hover {
+    box-shadow: 2px 2px 2px ${colors.tertiary};
+  }
+`;
+
+export const StyledNewPostInput = styled.input`
+  display: none;
+`;

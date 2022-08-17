@@ -11,7 +11,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user.username && !isLoading) {
+    if ((!user.username) && !isLoading) {
       navigate('/login');
     }
   }, [user.username, navigate, isLoading]);
@@ -33,7 +33,9 @@ function Home() {
     isLoading ? <h1>Loading...</h1> :
     <>
       <Header page='home' logout={handleLogout} />
-      <PostsContainer />
+      <main>
+        <PostsContainer />
+      </main>
     </>
   );
 }

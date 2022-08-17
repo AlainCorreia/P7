@@ -18,7 +18,7 @@ const createToken = (id, isAdmin) => {
 
 exports.register = (req, res, next) => {
   // Request validation
-  const validation = userValidation.registerSchema.validate(req.body);
+  const validation = userValidation.registerValidationSchema.validate(req.body);
   if (validation.error)
     return res.status(400).json({ error: validation.error.details[0].message });
   // Hash password and save user to database
@@ -52,7 +52,7 @@ exports.register = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   // Request validation
-  const validation = userValidation.loginSchema.validate(req.body);
+  const validation = userValidation.loginValidationSchema.validate(req.body);
   if (validation.error)
     return res.status(400).json({ error: validation.error.details[0].message });
   User.findOne({ email: req.body.email })
@@ -70,7 +70,8 @@ exports.login = (req, res, next) => {
           res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
           res.status(200).json({
             userId: user._id,
-            username: user.username
+            username: user.username,
+            isAdmin: user.isAdmin
           });
         })
         .catch((error) => res.status(500).json({ error }));
@@ -83,14 +84,15 @@ exports.logout = (req, res, next) => {
   res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
-exports.getUser = (req, res, next) => {
-  User.findById(req.auth.userId)
-    .then((user) => {
-      return res.status(200).json({
-        username: user.username,
-        userId: user._id,
-        isAdmin: user.isAdmin,
-      });
-    })
-    .catch((err) => console.log(err));
+exports.getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.auth.userId);
+    return res.status(200).json({
+      username: user.username,
+      userId: user._id,
+      isAdmin: user.isAdmin,
+    });
+  } catch {
+    (err) => console.log(err);
+  }
 };

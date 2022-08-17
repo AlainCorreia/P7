@@ -1,21 +1,45 @@
 const Post = require('../models/Post');
 const fs = require('fs');
 
+const isGranted = (post, auth) => {
+  return post.author._id.toHexString() === auth.userId || auth.isAdmin;
+};
+
+const deletePicture = (filename) => {
+  fs.unlink(`images/posts/${filename}`, (error) => {
+    if (error) throw error;
+  });
+};
+
+const setFilename = (req) => {
+  return `${req.protocol}://${req.get('host')}/images/posts/${
+    req.file.filename
+  }`;
+};
+
+const getFilename = (post) => {
+  return post.pictureUrl.split('/posts/')[1];
+};
+
 exports.createPost = (req, res) => {
   const post = new Post({
     text: req.body.text,
     author: req.auth.userId,
-    pictureUrl:
-      req.file !== undefined
-        ? `${req.protocol}://${req.get('host')}/images/posts/${
-            req.file.filename
-          }`
-        : '',
+    pictureUrl: req.file !== undefined ? setFilename(req) : '',
   });
-  post
-    .save()
-    .then((docs) => res.status(201).json({ message: 'Post enregistré.', docs }))
-    .catch((error) => res.status(400).json({ error }));
+
+  if (!post.text && !req.file) {
+    return res
+      .status(400)
+      .json({ message: 'Le post doit contenir du texte et/ou une image.' });
+  } else {
+    post
+      .save()
+      .then((docs) =>
+        res.status(201).json({ message: 'Post enregistré.', docs })
+      )
+      .catch((error) => res.status(400).json({ error }));
+  }
 };
 
 exports.getPosts = (req, res) => {
@@ -30,80 +54,31 @@ exports.updatePost = async (req, res, next) => {
   try {
     const post = await Post.findOne({ _id: req.params.id });
 
-    if (req.file) {
-      const postObject = {
-        text: req.body.text,
-        pictureUrl: `${req.protocol}://${req.get('host')}/images/posts/${
-          req.file.filename
-        }`,
-      };
+    const data = {
+      text: req.body.text,
+      _id: req.params.id,
+    };
 
-      if (post.author._id != req.auth.userId && !req.auth.isAdmin) {
-        fs.unlink(`images/posts/${req.file.filename}`, (error) => {
-          if (error) throw error;
-        });
-        return res.status(403).json({ error: 'Requête non autorisée.' });
+    if (!isGranted(post, req.auth)) {
+      if (req.file) {
+        deletePicture(req.file.filename);
       }
-
-      if (post.pictureUrl) {
-        const filename = post.pictureUrl.split('/posts/')[1];
-        fs.unlink(`images/posts/${filename}`, () => {
-          Post.findByIdAndUpdate(
-            req.params.id,
-            { ...postObject, _id: req.params.id },
-            { new: true }
-          )
-            .then((docs) =>
-              res.status(200).json({ message: 'Post modifié.', docs })
-            )
-            .catch((error) => res.status(400).json({ error }));
-        });
-      } else {
-        Post.findByIdAndUpdate(
-          req.params.id,
-          { ...postObject, _id: req.params.id },
-          { new: true }
-        )
-          .then((docs) =>
-            res.status(200).json({ message: 'Post modifié.', docs })
-          )
-          .catch((error) => res.status(400).json({ error }));
-      }
-    } else {
-      if (post.author._id != req.auth.userId && !req.auth.isAdmin) {
-        return res.status(403).json({ error: 'Requête non autorisée.' });
-      } else {
-        if (post.pictureUrl && !req.body.image) {
-          const filename = post.pictureUrl.split('/posts/')[1];
-          fs.unlink(`images/posts/${filename}`, () => {
-            Post.findByIdAndUpdate(
-              req.params.id,
-              { text: req.body.text, pictureUrl: '', _id: req.params.id },
-              { new: true }
-            )
-              .then((docs) =>
-                res.status(200).json({ message: 'Post modifié.', docs })
-              )
-              .catch((error) => res.status(400).json({ error }));
-          });
-        } else {
-          console.log(req.body);
-          Post.findByIdAndUpdate(
-            req.params.id,
-            {
-              text: req.body.text,
-              pictureUrl: req.body.image,
-              _id: req.params.id,
-            },
-            { new: true }
-          )
-            .then((docs) =>
-              res.status(200).json({ message: 'Post modifié.', docs })
-            )
-            .catch((error) => res.status(400).json({ error }));
-        }
-      }
+      return res.status(403).json({ error: 'Requête non autorisée.' });
     }
+
+    if (post.pictureUrl && (!req.body.image || req.file)) {
+      deletePicture(getFilename(post));
+    }
+
+    if (req.file) {
+      data.pictureUrl = setFilename(req);
+    } else if (!req.body.image) {
+      data.pictureUrl = '';
+    }
+
+    Post.findByIdAndUpdate(req.params.id, data, { new: true })
+      .then((docs) => res.status(200).json({ message: 'Post modifié.', docs }))
+      .catch((error) => res.status(400).json({ error }));
   } catch (error) {
     res.status(404).json({ error });
   }
@@ -112,46 +87,39 @@ exports.updatePost = async (req, res, next) => {
 exports.likePost = async (req, res, next) => {
   try {
     const post = await Post.findOne({ _id: req.params.id });
+
+    const data = {
+      _id: req.params.id,
+    };
+
+    let message = '';
+
     switch (req.body.like) {
       case 0:
         if (post.likes.includes(req.auth.userId)) {
-          Post.findByIdAndUpdate(
-            req.params.id,
-            {
-              $pull: { likes: req.auth.userId },
-              _id: req.params.id,
-            },
-            { new: true }
-          )
-            .then((docs) =>
-              res.status(201).json({ message: 'Like annulé.', docs })
-            )
-            .catch((error) => res.status(400).json({ error }));
+          data.$pull = { likes: req.auth.userId };
+          message = 'Like annulé.';
         } else {
           return res.status(400).json({ error: 'Requête invalide.' });
         }
         break;
+
       case 1:
         if (post.likes.includes(req.auth.userId)) {
           return res.status(400).json({ error: 'Post déjà liké.' });
         } else {
-          Post.findByIdAndUpdate(
-            req.params.id,
-            {
-              $push: { likes: req.auth.userId },
-              _id: req.params.id,
-            },
-            { new: true }
-          )
-            .then((docs) =>
-              res.status(201).json({ message: 'Post liké.', docs })
-            )
-            .catch((error) => res.status(400).json({ error }));
+          data.$push = { likes: req.auth.userId };
+          message = 'Post liké.';
         }
         break;
+
       default:
         return res.status(400).json({ error: 'Invalid request.' });
     }
+
+    Post.findByIdAndUpdate(req.params.id, data, { new: true })
+      .then((docs) => res.status(201).json({ message, docs }))
+      .catch((error) => res.status(400).json({ error }));
   } catch (error) {
     res.status(404).json({ error });
   }
@@ -161,15 +129,17 @@ exports.deletePost = async (req, res, next) => {
   try {
     const post = await Post.findOne({ _id: req.params.id });
 
-    if (post.author._id != req.auth.userId && !req.auth.isAdmin)
+    if (!isGranted)
       return res.status(403).json({ error: 'Requête non autorisée.' });
 
-    const filename = post.pictureUrl.split('/posts/')[1];
-    fs.unlink(`images/posts/${filename}`, () => {
-      Post.deleteOne({ _id: req.params.id })
-        .then(() => res.status(201).json({ message: 'Post supprimé.' }))
-        .catch((error) => res.status(400).json({ error }));
-    });
+    if (post.pictureUrl) {
+      // const filename = post.pictureUrl.split('/posts/')[1];
+      deletePicture(getFilename(post));
+    }
+
+    Post.deleteOne({ _id: req.params.id })
+      .then(() => res.status(201).json({ message: 'Post supprimé.' }))
+      .catch((error) => res.status(400).json({ error }));
   } catch (error) {
     res.status(404).json({ error });
   }

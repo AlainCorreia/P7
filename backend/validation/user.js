@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-exports.registerSchema = Joi.object({
+exports.registerValidationSchema = Joi.object({
   username: Joi.string().trim().required().min(2).messages({
     'string.empty': "Le champ nom d'utilisateur est obligatoire.",
     'string.min': "Le nom d'utilisateur doit comporter au moins 2 caractères.",
@@ -21,7 +21,7 @@ exports.registerSchema = Joi.object({
   }),
 });
 
-exports.loginSchema = Joi.object({
+exports.loginValidationSchema = Joi.object({
   email: Joi.string().trim().required().messages({
     'string.empty': 'Le champ email est obligatoire.',
   }),

@@ -21,9 +21,9 @@ const RegisterForm = ({
 }) => {
   return (
     <StyledFormContainer>
-      <StyledFormTitle>Créer un compte</StyledFormTitle>
+      <StyledFormTitle id='register'>Créer un compte</StyledFormTitle>
       <StyledFormContent>
-        <form onSubmit={handleSubmit}>
+        <form aria-labelledby='register' onSubmit={handleSubmit}>
           <StyledLabel htmlFor='username'>Nom d'utilisateur</StyledLabel>
           <StyledInput
             id='username'

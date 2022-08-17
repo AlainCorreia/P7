@@ -13,18 +13,24 @@ import {
   StyledPostFooter,
   StyledPostButton,
   StyledEditTextArea,
-  StyledLikeContainer,
+  StyledLikeButton,
   StyledLikeImg,
+  StyledButtonIcon,
+  StyledButtonContainer,
 } from './styles';
 
 import {
   StyledNewPostImg,
   StyledSelectImgButton,
   StyledNewPostInput,
-} from '../../pages/NewPost/styles';
+} from '../../styles/shared-styles';
 
 import isLikedHeart from '../../assets/images/heart-solid.svg';
 import heart from '../../assets/images/heart-regular.svg';
+import check from '../../assets/images/check-solid.svg';
+import trash from '../../assets/images/trash-can-solid.svg';
+import pen from '../../assets/images/pen-to-square-solid-white.svg';
+import xmark from '../../assets/images/xmark-solid-white.svg';
 
 const PostCard = ({
   id,
@@ -161,33 +167,50 @@ const PostCard = ({
       )}
       <StyledNewPostInput
         type="file"
+        accept=".jpg, .jpeg, .png, .webp, .gif"
         ref={fileInput}
         onChange={(e) => handlePicture(e)}
       />
       <StyledPostFooter>
-        <StyledLikeContainer onClick={handleLike}>
+        <StyledLikeButton onClick={handleLike}>
           {isLiked ? (
             <StyledLikeImg src={isLikedHeart} alt="J'aime" />
           ) : (
             <StyledLikeImg src={heart} alt="Je n'aime pas" />
           )}{' '}
           {likes.length}
-        </StyledLikeContainer>
+        </StyledLikeButton>
         {(user[0].userId === authorId || user[0].isAdmin) && (
-          <div>
+          <StyledButtonContainer>
             <StyledPostButton onClick={handleButton}>
-              {isDeleteMode || isEditMode ? 'Annuler' : 'Éditer'}
+              {isDeleteMode || isEditMode ? (
+                <StyledButtonIcon src={xmark} alt="Annuler" />
+              ) : (
+                <StyledButtonIcon src={pen} alt="Éditer" />
+              )}
             </StyledPostButton>
             {isEditMode ? (
-              <StyledPostButton onClick={handleEdit}>
-                Confirmer la modification
-              </StyledPostButton>
+              (messageText !== text || postPicture !== image || file) && (
+                <StyledPostButton onClick={handleEdit}>
+                  <>
+                    <StyledButtonIcon src={check} alt="Confirmer" />
+                    <span>Confirmer ?</span>
+                  </>
+                </StyledPostButton>
+              )
             ) : (
               <StyledPostButton onClick={handleDelete}>
-                {isDeleteMode ? 'Confirmer la suppression' : 'Supprimer'}
+                {isDeleteMode ? (
+                  <>
+                    <StyledButtonIcon src={check} alt="Confirmer" />
+                    <span>Supprimer ?</span>
+                  </>
+                ) : (
+                  <StyledButtonIcon src={trash} alt="Supprimer" />
+                )}
               </StyledPostButton>
             )}
-          </div>
+          </StyledButtonContainer>
         )}
       </StyledPostFooter>
     </StyledCard>

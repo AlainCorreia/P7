@@ -37,21 +37,23 @@ const PostsContainer = () => {
   };
 
   return (
-    <StyledPostsContainer>
-      {posts.map((post) => (
-        <PostCard
-          key={post._id}
-          id={post._id}
-          authorName={post.author.username}
-          authorId={post.author._id}
-          text={post.text}
-          likes={post.likes}
-          image={post.pictureUrl}
-          date={post.createdAt}
-          removePost={removePost}
-          updatePost={updatePost}
-        />
-      ))}
+    <StyledPostsContainer aria-label='Liste des posts'>
+      <ul>
+        {posts.map((post) => (
+          <PostCard
+            key={post._id}
+            id={post._id}
+            authorName={post.author.username}
+            authorId={post.author._id}
+            text={post.text}
+            likes={post.likes}
+            image={post.pictureUrl}
+            date={post.createdAt}
+            removePost={removePost}
+            updatePost={updatePost}
+          />
+        ))}
+      </ul>
     </StyledPostsContainer>
   );
 };

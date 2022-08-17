@@ -4,6 +4,8 @@ const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
   'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
 };
 
 const storage = multer.diskStorage({
@@ -24,7 +26,9 @@ module.exports = multer({
   fileFilter: (req, file, callback) => {
     if (!MIME_TYPES[file.mimetype]) {
       return callback(
-        new Error('Seuls les fichiers .jpeg, .jpg et .png sont autorisés'),
+        new Error(
+          'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.'
+        ),
         false
       );
     } else {

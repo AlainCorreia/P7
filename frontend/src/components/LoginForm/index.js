@@ -14,9 +14,9 @@ import {
 const LoginForm = ({ handleSubmit, setEmail, setPassword, errorMessage, setErrorMessage }) => {
   return (
     <StyledFormContainer>
-      <StyledFormTitle>Connexion</StyledFormTitle>
+      <StyledFormTitle id='login'>Connexion</StyledFormTitle>
       <StyledFormContent>
-        <form onSubmit={handleSubmit}>
+        <form aria-labelledby='login' onSubmit={handleSubmit}>
           <StyledLabel htmlFor='email'>Email</StyledLabel>
           <StyledInput
             id='email'
