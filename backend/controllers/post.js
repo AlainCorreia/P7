@@ -11,7 +11,7 @@ const deletePicture = (filename) => {
   });
 };
 
-const setFilename = (req) => {
+const getFileUrl = (req) => {
   return `${req.protocol}://${req.get('host')}/images/posts/${
     req.file.filename
   }`;
@@ -25,7 +25,8 @@ exports.createPost = (req, res) => {
   const post = new Post({
     text: req.body.text,
     author: req.auth.userId,
-    pictureUrl: req.file !== undefined ? setFilename(req) : '',
+    pictureUrl: req.file !== undefined ? getFileUrl(req) : '',
+    editedBy: req.auth.userId,
   });
 
   if (!post.text && !req.file) {
@@ -45,6 +46,7 @@ exports.createPost = (req, res) => {
 exports.getPosts = (req, res) => {
   Post.find()
     .populate('author', 'username')
+    .populate('editedBy', 'username')
     .sort({ createdAt: -1 })
     .then((posts) => res.status(200).json(posts))
     .catch((error) => res.status(400).json({ error }));
@@ -57,6 +59,8 @@ exports.updatePost = async (req, res, next) => {
     const data = {
       text: req.body.text,
       _id: req.params.id,
+      editedBy: req.auth.userId,
+      lastEdited: new Date()
     };
 
     if (!isGranted(post, req.auth)) {
@@ -71,7 +75,7 @@ exports.updatePost = async (req, res, next) => {
     }
 
     if (req.file) {
-      data.pictureUrl = setFilename(req);
+      data.pictureUrl = getFileUrl(req);
     } else if (!req.body.image) {
       data.pictureUrl = '';
     }
@@ -133,7 +137,6 @@ exports.deletePost = async (req, res, next) => {
       return res.status(403).json({ error: 'Requête non autorisée.' });
 
     if (post.pictureUrl) {
-      // const filename = post.pictureUrl.split('/posts/')[1];
       deletePicture(getFilename(post));
     }
 

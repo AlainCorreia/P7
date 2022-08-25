@@ -42,6 +42,7 @@ export const StyledPostText = styled.p`
   padding: 20px;
   font-size: 17px;
   text-align: justify;
+  white-space: pre-line;
 
   @media (max-width: 430px) {
     font-size: 16px;
@@ -71,7 +72,7 @@ export const StyledImg = styled.img`
   margin: auto;
   width: 100%;
   height: 100%;
-  max-height: 50vw;
+  max-height: 45vw;
   object-fit: contain;
 
   @media (max-width: 960px) {
@@ -96,8 +97,6 @@ export const StyledPostFooter = styled.div`
 `;
 
 export const StyledPostButton = styled.button`
-  /* width: 32px; */
-  /* height: 32px; */
   padding: 8px;
   display: flex;
   justify-content: center;
@@ -132,10 +131,10 @@ export const StyledEditTextArea = styled.textarea`
   font-family: inherit;
   font-size: 17px;
   text-align: justify;
-  white-space: normal;
   border: 2px solid ${colors.tertiary};
   border-radius: 5px;
   margin: 16px 0;
+  white-space: pre-line;
 
   @media (max-width: 430px) {
     font-size: 16px;
@@ -181,3 +180,10 @@ export const StyledButtonIcon = styled.img`
 export const StyledButtonContainer = styled.div`
   display: flex;
 `;
+
+export const StyledEditInfo = styled.p`
+  font-size: 14px;
+  font-style: italic;
+  text-align: end;
+  padding-right: 16px;
+`

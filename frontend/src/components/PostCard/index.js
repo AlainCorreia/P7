@@ -1,6 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { UserContext } from '../../context/UserContext';
 import { api } from '../../utils/api';
+import { MIME_TYPES } from '../../utils/constants';
 
 import {
   StyledCard,
@@ -17,12 +18,14 @@ import {
   StyledLikeImg,
   StyledButtonIcon,
   StyledButtonContainer,
+  StyledEditInfo,
 } from './styles';
 
 import {
   StyledNewPostImg,
   StyledSelectImgButton,
   StyledNewPostInput,
+  StyledErrorMessage,
 } from '../../styles/shared-styles';
 
 import isLikedHeart from '../../assets/images/heart-solid.svg';
@@ -40,6 +43,8 @@ const PostCard = ({
   image,
   likes,
   date,
+  editedBy,
+  lastEdited,
   removePost,
   updatePost,
 }) => {
@@ -48,12 +53,13 @@ const PostCard = ({
   const [messageText, setMessageText] = useState(text);
   const [postPicture, setPostPicture] = useState(image);
   const [file, setFile] = useState();
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const fileInput = useRef(null);
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
-    likes.includes(user[0].userId) ? setIsLiked(true) : setIsLiked(false);
+    likes.includes(user.userId) ? setIsLiked(true) : setIsLiked(false);
   }, [likes, user]);
 
   const formatDate = (value) => {
@@ -89,6 +95,7 @@ const PostCard = ({
       setMessageText(text);
       setPostPicture(image);
       setFile();
+      setErrorMessage('');
     }
   };
 
@@ -106,7 +113,10 @@ const PostCard = ({
         .patch(`posts/${id}`, data)
         .then((res) => {
           setIsEditMode(false);
-          updatePost(res.data.docs);
+          updatePost({
+            ...res.data.docs,
+            editedBy: { username: user.username },
+          });
         })
         .catch((err) => console.log(err));
     }
@@ -117,18 +127,27 @@ const PostCard = ({
 
     api
       .post(`posts/${id}/like`, data)
-      .then((res) => updatePost(res.data.docs))
+      .then((res) =>
+        updatePost({ ...res.data.docs, editedBy: { username: editedBy } })
+      )
       .catch((err) => console.log(err));
   };
 
   const deleteImage = () => {
     setPostPicture('');
     setFile();
+    setErrorMessage('');
   };
 
   const handlePicture = (e) => {
-    setPostPicture(URL.createObjectURL(e.target.files[0]));
-    setFile(e.target.files[0]);
+    if (MIME_TYPES[e.target.files[0].type]) {
+      setPostPicture(URL.createObjectURL(e.target.files[0]));
+      setFile(e.target.files[0]);
+    } else {
+      setErrorMessage(
+        'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.'
+      );
+    }
   };
 
   return (
@@ -143,6 +162,7 @@ const PostCard = ({
           autoFocus
           defaultValue={messageText}
           onChange={(e) => setMessageText(e.target.value)}
+          onFocus={() => setErrorMessage('')}
         />
       ) : (
         <StyledPostText>{text}</StyledPostText>
@@ -156,7 +176,9 @@ const PostCard = ({
         <StyledNewPostImg src={postPicture} alt="" />
       )}
       {isEditMode && (
-        <StyledSelectImgButton onClick={() => fileInput.current.click()}>
+        <StyledSelectImgButton
+          onClick={() => [fileInput.current.click(), setErrorMessage('')]}
+        >
           {postPicture ? "Modifier l'image" : 'Ajouter une image'}
         </StyledSelectImgButton>
       )}
@@ -171,8 +193,19 @@ const PostCard = ({
         ref={fileInput}
         onChange={(e) => handlePicture(e)}
       />
+      <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
+      {lastEdited && (
+        <StyledEditInfo>
+          Edité par {editedBy} le {formatDate(lastEdited)}
+        </StyledEditInfo>
+      )}
       <StyledPostFooter>
-        <StyledLikeButton onClick={handleLike}>
+        <StyledLikeButton
+          aria-label='Liker le post et nombre de likes'
+          role="switch"
+          aria-checked={isLiked}
+          onClick={handleLike}
+        >
           {isLiked ? (
             <StyledLikeImg src={isLikedHeart} alt="J'aime" />
           ) : (
@@ -180,9 +213,14 @@ const PostCard = ({
           )}{' '}
           {likes.length}
         </StyledLikeButton>
-        {(user[0].userId === authorId || user[0].isAdmin) && (
+        {(user.userId === authorId || user.isAdmin) && (
           <StyledButtonContainer>
-            <StyledPostButton onClick={handleButton}>
+            <StyledPostButton
+              aria-label={
+                isDeleteMode || isEditMode ? 'Annuler' : 'Éditer le post'
+              }
+              onClick={handleButton}
+            >
               {isDeleteMode || isEditMode ? (
                 <StyledButtonIcon src={xmark} alt="Annuler" />
               ) : (
@@ -191,7 +229,10 @@ const PostCard = ({
             </StyledPostButton>
             {isEditMode ? (
               (messageText !== text || postPicture !== image || file) && (
-                <StyledPostButton onClick={handleEdit}>
+                <StyledPostButton
+                  aria-label="Confirmer la modification"
+                  onClick={handleEdit}
+                >
                   <>
                     <StyledButtonIcon src={check} alt="Confirmer" />
                     <span>Confirmer ?</span>
@@ -199,7 +240,14 @@ const PostCard = ({
                 </StyledPostButton>
               )
             ) : (
-              <StyledPostButton onClick={handleDelete}>
+              <StyledPostButton
+                aria-label={
+                  isDeleteMode
+                    ? 'Confirmer la suppression'
+                    : 'Supprimer le post'
+                }
+                onClick={handleDelete}
+              >
                 {isDeleteMode ? (
                   <>
                     <StyledButtonIcon src={check} alt="Confirmer" />

@@ -7,3 +7,4 @@ export const MIME_TYPES = {
     'image/webp': 'webp',
     'image/gif': 'gif',
   };
+  

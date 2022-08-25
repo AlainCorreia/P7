@@ -12,13 +12,14 @@ import {
   StyledSelectImgButton,
 } from '../../styles/shared-styles';
 import { UserContext } from '../../context/UserContext';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const NewPost = () => {
   const [messageText, setMessageText] = useState('');
   const [postPicture, setPostPicture] = useState('');
   const [file, setFile] = useState();
   const [errorMessage, setErrorMessage] = useState('');
-  const [user, setUser, isLoading] = useContext(UserContext);
+  const { user, isLoading } = useContext(UserContext);
   const fileInput = useRef(null);
   const navigate = useNavigate();
 
@@ -69,7 +70,7 @@ const NewPost = () => {
   };
 
   return isLoading ? (
-    <h1>Loading...</h1>
+    <LoadingSpinner />
   ) : (
     <>
       <Header page="newpost" />

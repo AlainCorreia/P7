@@ -34,7 +34,7 @@ export const StyledButton = styled.button`
   }
 
   &:focus {
-    outline: 2px solid ${colors.tertiary};
+    outline: 2px solid #000000;
   }
 `;
 
@@ -119,6 +119,10 @@ export const StyledSelectImgButton = styled.button`
 
   &:hover {
     box-shadow: 2px 2px 2px ${colors.tertiary};
+  }
+
+  &:focus {
+    outline: 2px solid #000000;
   }
 `;
 

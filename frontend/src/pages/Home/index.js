@@ -1,25 +1,26 @@
 import React, { useContext, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../../utils/api';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import PostsContainer from '../../components/PostsContainer';
 import Header from '../../components/Header';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 function Home() {
-  const [user, setUser, isLoading] = useContext(UserContext);
+  const { user, setUser, isLoading } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if ((!user.username) && !isLoading) {
+    if (!user.username && !isLoading) {
       navigate('/login');
     }
   }, [user.username, navigate, isLoading]);
 
   const handleLogout = () => {
     setUser({});
-    axios
-      .get('http://localhost:5000/api/auth/logout', { withCredentials: true })
+    api
+      .get('auth/logout')
       .then((res) => {
         Cookies.remove('jwt');
         navigate('/login');
@@ -29,12 +30,13 @@ function Home() {
       });
   };
 
-  return (
-    isLoading ? <h1>Loading...</h1> :
+  return isLoading ? (
+    <LoadingSpinner />
+  ) : (
     <>
-      <Header page='home' logout={handleLogout} />
+      <Header page="home" logout={handleLogout} />
       <main>
-        <PostsContainer />
+        <PostsContainer user={user} />
       </main>
     </>
   );

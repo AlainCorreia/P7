@@ -15,6 +15,8 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     author: { type: Schema.Types.ObjectId, ref: 'User' },
+    editedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    lastEdited: {type: Date}
   },
   {
     timestamps: true,
