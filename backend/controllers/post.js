@@ -44,10 +44,14 @@ exports.createPost = (req, res) => {
 };
 
 exports.getPosts = (req, res) => {
+  const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+
   Post.find()
     .populate('author', 'username')
     .populate('editedBy', 'username')
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(10)
     .then((posts) => res.status(200).json(posts))
     .catch((error) => res.status(400).json({ error }));
 };
@@ -60,7 +64,7 @@ exports.updatePost = async (req, res, next) => {
       text: req.body.text,
       _id: req.params.id,
       editedBy: req.auth.userId,
-      lastEdited: new Date()
+      lastEdited: new Date(),
     };
 
     if (!isGranted(post, req.auth)) {
@@ -81,7 +85,11 @@ exports.updatePost = async (req, res, next) => {
     }
 
     Post.findByIdAndUpdate(req.params.id, data, { new: true })
-      .then((docs) => res.status(200).json({ message: 'Post modifié.', docs }))
+      .populate('author', 'username')
+      .populate('editedBy', 'username')
+      .then((docs) => {
+        res.status(200).json({ message: 'Post modifié.', docs });
+      })
       .catch((error) => res.status(400).json({ error }));
   } catch (error) {
     res.status(404).json({ error });
@@ -122,7 +130,7 @@ exports.likePost = async (req, res, next) => {
     }
 
     Post.findByIdAndUpdate(req.params.id, data, { new: true })
-      .then((docs) => res.status(201).json({ message, docs }))
+      .then(() => res.status(201).json({ message }))
       .catch((error) => res.status(400).json({ error }));
   } catch (error) {
     res.status(404).json({ error });

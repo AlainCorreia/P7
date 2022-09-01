@@ -3,9 +3,9 @@ import { api } from '../../utils/api';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import PostsContainer from '../../components/PostsContainer';
-import Header from '../../components/Header';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import PostsContainer from '../../components/Posts/PostsContainer/PostsContainer';
+import Header from '../../components/Header/Header';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 function Home() {
   const { user, setUser, isLoading } = useContext(UserContext);
@@ -21,7 +21,7 @@ function Home() {
     setUser({});
     api
       .get('auth/logout')
-      .then((res) => {
+      .then(() => {
         Cookies.remove('jwt');
         navigate('/login');
       })
@@ -34,10 +34,8 @@ function Home() {
     <LoadingSpinner />
   ) : (
     <>
-      <Header page="home" logout={handleLogout} />
-      <main>
-        <PostsContainer user={user} />
-      </main>
+      <Header page='home' logout={handleLogout} />
+      <PostsContainer />
     </>
   );
 }

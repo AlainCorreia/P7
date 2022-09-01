@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../utils/api';
-import RegisterForm from '../../components/RegisterForm';
-import Header from '../../components/Header';
+import RegisterForm from '../../components/LogForms/RegisterForm/RegisterForm';
+import Header from '../../components/Header/Header';
 import { UserContext } from '../../context/UserContext';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 const Register = () => {
   const [username, setUsername] = useState('');

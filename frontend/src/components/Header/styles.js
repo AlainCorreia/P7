@@ -2,14 +2,20 @@ import styled from 'styled-components';
 import colors from '../../utils/style/colors';
 
 export const StyledHeader = styled.header`
+  height: 74px;
   position: fixed;
-  left: 0;
+  top: 0;
   right: 0;
+  left: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px;
   background-color: ${colors.primary};
+
+  @media (max-width: 430px) {
+    height: 64px;
+  }
 `;
 
 export const StyledLogo = styled.img`

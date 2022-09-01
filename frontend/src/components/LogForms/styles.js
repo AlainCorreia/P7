@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import colors from '../utils/style/colors';
+import colors from '../../utils/style/colors';
 
 export const StyledInput = styled.input`
   outline: none;
@@ -72,13 +72,10 @@ export const StyledLabel = styled.label`
 `
 
 export const StyledErrorMessage = styled.div`
-  padding: ${(props) =>
-      props.page === 'newpost'
-        ? '0 0 16px'
-        : '16px 0 0'};
+  padding: 16px 0 0;
   color: ${colors.primary};
   font-size: 18px;
-`
+`;
 export const StyledNavInfo = styled.p`
   padding: 16px 0 4px;
 `
@@ -92,40 +89,3 @@ export const StyledFormLink = styled(Link)`
     font-weight: 700;
   }
 `
-export const StyledNewPostImg = styled.img`
-  display: block;
-  width: 400px;
-  max-width: 100%;
-  max-height: 400px;
-`;
-
-export const StyledSelectImgButton = styled.button`
-  background-color: ${colors.tertiary};
-  padding: 8px 12px;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  font-family: 'Lato', sans-serif;
-  margin: 12px 20px 20px 0;
-
-  @media (max-width: 430px) {
-    font-size: 15px;
-    margin-right: 16px;
-  }
-
-  &:hover {
-    box-shadow: 2px 2px 2px ${colors.tertiary};
-  }
-
-  &:focus {
-    outline: 2px solid #000000;
-  }
-`;
-
-export const StyledNewPostInput = styled.input`
-  display: none;
-`;

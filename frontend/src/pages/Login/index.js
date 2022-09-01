@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../utils/api';
 import { UserContext } from '../../context/UserContext';
-import LoginForm from '../../components/LoginForm';
-import Header from '../../components/Header';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoginForm from '../../components/LogForms/LoginForm/LoginForm';
+import Header from '../../components/Header/Header';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 const Login = () => {
   const [email, setEmail] = useState('');

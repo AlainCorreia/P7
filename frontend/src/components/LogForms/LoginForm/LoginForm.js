@@ -9,7 +9,7 @@ import {
   StyledErrorMessage,
   StyledNavInfo,
   StyledFormLink,
-} from '../../styles/shared-styles';
+} from '../styles';
 
 const LoginForm = ({ handleSubmit, setEmail, setPassword, errorMessage, setErrorMessage }) => {
   return (

@@ -9,7 +9,7 @@ import {
   StyledErrorMessage,
   StyledFormLink,
   StyledNavInfo,
-} from '../../styles/shared-styles';
+} from '../styles';
 
 const RegisterForm = ({
   handleSubmit,

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import colors from '../../utils/style/colors';
+import colors from '../../../utils/style/colors';
 
 export const StyledCard = styled.li`
   list-style: none;
@@ -10,7 +10,7 @@ export const StyledCard = styled.li`
       props.isDeleteMode || props.isEditMode
         ? colors.primary
         : colors.tertiary};
-  border-radius: 8px;
+  border-radius: 4px;
   background-color: #ffffff;
   padding: 4px;
 
@@ -24,29 +24,42 @@ export const StyledPostHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  margin-bottom: 20px;
   background-color: ${colors.primary};
-  border-radius: 8px;
+  border-radius: 4px;
+
+  @media (max-width: 430px) {
+    margin-bottom: 12px;
+  }
 `;
 
 export const StyledPostUsername = styled.p`
   font-size: 20px;
   font-weight: 600;
+
+  @media (max-width: 430px) {
+    font-size: 18px;
+  }
 `;
 
 export const StyledPostDate = styled.p`
   font-style: italic;
   font-weight: 400;
+
+  @media (max-width: 430px) {
+    font-size: 15px;
+  }
 `;
 
 export const StyledPostText = styled.p`
-  padding: 20px;
+  padding: 0 20px 20px;
   font-size: 17px;
   text-align: justify;
   white-space: pre-line;
 
   @media (max-width: 430px) {
     font-size: 16px;
-    padding: 12px;
+    padding: 0 12px 12px;
   }
 `;
 
@@ -72,15 +85,19 @@ export const StyledImg = styled.img`
   margin: auto;
   width: 100%;
   height: 100%;
-  max-height: 45vw;
+  max-height: 640px;
   object-fit: contain;
 
+  @media (max-width: 1200px) {
+    max-height: 52vw;
+  }
+
   @media (max-width: 960px) {
-    max-height: 60vw; 
+    max-height: 59vw;
   }
 
   @media (max-width: 820px) {
-    max-height: 70vw;
+    max-height: 68vw;
   }
 
   @media (max-width: 430px) {
@@ -92,8 +109,9 @@ export const StyledPostFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 8px;
-  margin: 20px 0 12px;
+  margin-top: 20px;
+  padding: 8px 8px 4px;
+  border-top: 1px solid ${colors.tertiary};
 `;
 
 export const StyledPostButton = styled.button`
@@ -101,7 +119,7 @@ export const StyledPostButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 8px;
+  margin-left: 8px;
   background-color: ${colors.tertiary};
   outline: none;
   border: none;
@@ -124,55 +142,6 @@ export const StyledPostButton = styled.button`
   }
 `;
 
-export const StyledEditTextArea = styled.textarea`
-  resize: none;
-  width: 100%;
-  padding: 16px;
-  font-family: inherit;
-  font-size: 17px;
-  text-align: justify;
-  border: 2px solid ${colors.tertiary};
-  border-radius: 5px;
-  margin: 16px 0;
-  white-space: pre-line;
-
-  @media (max-width: 430px) {
-    font-size: 16px;
-    padding: 12px;
-  }
-
-  &:focus {
-    border: 2px solid ${colors.primary};
-    outline: none;
-  }
-`;
-
-export const StyledLikeButton = styled.button`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 10px;
-  border: 1px solid ${colors.tertiary};
-  border-radius: 5px;
-  background-color: #ffffff;
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
-
-  &:hover {
-    border: 1px solid ${colors.primary};
-  }
-
-  &:focus {
-    outline: 2px solid ${colors.primary};
-    border: none;
-    padding: 9px 11px;
-  }
-`;
-export const StyledLikeImg = styled.img`
-  width: 22px;
-  margin-right: 8px;
-`;
-
 export const StyledButtonIcon = styled.img`
   width: 16px;
   max-height: 16px;
@@ -185,5 +154,6 @@ export const StyledEditInfo = styled.p`
   font-size: 14px;
   font-style: italic;
   text-align: end;
-  padding-right: 16px;
+  padding: 8px 8px 0;
+  margin-bottom: -8px;
 `

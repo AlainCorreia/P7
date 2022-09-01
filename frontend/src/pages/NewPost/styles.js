@@ -1,26 +1,33 @@
 import styled from 'styled-components';
 import colors from '../../utils/style/colors';
 
-export const StyledNewPostContainer = styled.section`
+export const StyledMainContainer = styled.main`
+  display: flex;
+  flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 96px 16px 16px;
-  font-family: 'Lato', sans-serif;
   background-color: ${colors.secondary};
 `;
 
-export const StyledTextArea = styled.textarea`
-  resize: none;
-  width: 100%;
-  outline: none;
+export const StyledButton = styled.button`
+  width: calc(100% - 32px);
+  margin: 0 auto 16px;;
   padding: 16px 20px;
-  font-family: inherit;
-  font-size: 17px;
+  outline: none;
   border: none;
   border-radius: 5px;
-  margin-bottom: 16px;
+  cursor: pointer;
+  background-color: ${colors.primary};
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 20px;
+  font-family: 'Lato', sans-serif;
+
+  &:hover {
+    box-shadow: 2px 2px 2px ${colors.tertiary};
+  }
 
   &:focus {
-    outline: 2px solid ${colors.primary};
+    outline: 2px solid #000000;
   }
 `;
