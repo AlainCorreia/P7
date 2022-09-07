@@ -17,11 +17,9 @@ const createToken = (id, isAdmin) => {
 };
 
 exports.register = (req, res, next) => {
-  // Request validation
   const validation = userValidation.registerValidationSchema.validate(req.body);
   if (validation.error)
     return res.status(400).json({ error: validation.error.details[0].message });
-  // Hash password and save user to database
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -51,27 +49,28 @@ exports.register = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  // Request validation
   const validation = userValidation.loginValidationSchema.validate(req.body);
   if (validation.error)
     return res.status(400).json({ error: validation.error.details[0].message });
   User.findOne({ email: req.body.email })
     .then((user) => {
-      // If email adress not in database
       if (!user)
-        return res.status(401).json({ error: 'Adresse email inconnue.' });
-      // Check password
+        return res.status(401).json({ error: 'Identifiants incorrects.' });
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid)
-            return res.status(401).json({ error: 'Mot de passe incorrect.' });
+            return res.status(401).json({ error: 'Identifiants incorrects.' });
           const token = createToken(user._id, user.isAdmin);
-          res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+          res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: maxAge * 1000,
+            sameSite: 'lax',
+          });
           res.status(200).json({
             userId: user._id,
             username: user.username,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
           });
         })
         .catch((error) => res.status(500).json({ error }));

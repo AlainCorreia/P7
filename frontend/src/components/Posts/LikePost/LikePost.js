@@ -15,7 +15,7 @@ const LikePost = ({ likes, postId, userId }) => {
 
     api
       .post(`posts/${postId}/like`, data)
-      .then((res) => {
+      .then(() => {
         setIsLiked((prevIsLiked) => !prevIsLiked);
         setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
       })

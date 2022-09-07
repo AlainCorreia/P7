@@ -2,7 +2,6 @@ const http = require('http');
 const app = require('./app');
 require('dotenv').config();
 
-// Normalize port
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
   if (isNaN(port)) return val;
@@ -13,7 +12,6 @@ const normalizePort = (val) => {
 const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
 
-// Handle server errors
 const errorHandler = (error) => {
   if (error.syscall !== 'listen') throw error;
   const address = server.address();

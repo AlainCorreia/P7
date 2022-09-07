@@ -8,12 +8,13 @@ const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/posts');
 
 mongoose
-  .connect(process.env.DATABASE_URL, {
+  .connect(`${process.env.DATABASE_URI}/groupomania-api`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    family: 4,
   })
   .then(() => console.log('Successfully connected to MongoDB!'))
-  .catch(() => console.log('Failed to connect to MongoDB!'));
+  .catch((err) => console.log('Failed to connect to MongoDB! ' + err));
 
 const app = express();
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));

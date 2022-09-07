@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { MIME_TYPES } from '../../../utils/constants';
+import { ACTION_TYPES, MIME_TYPES } from '../../../utils/constants';
+
 import {
   StyledNewPostContainer,
   StyledTextArea,
@@ -7,36 +8,29 @@ import {
   StyledNewPostImg,
   StyledNewPostInput,
   StyledErrorMessage,
-  StyledImgContainer
+  StyledImgContainer,
 } from './styles';
 
-const CreateOrEditPost = ({
-  page,
-  postText,
-  postPicture,
-  setPostText,
-  setPostPicture,
-  errorMessage,
-  setErrorMessage,
-  setFile,
-}) => {
+const CreateOrEditPost = ({ page, state, dispatch }) => {
   const fileInput = useRef(null);
-  
+
   const handlePicture = (e) => {
     if (MIME_TYPES[e.target.files[0].type]) {
-      setPostPicture(URL.createObjectURL(e.target.files[0]));
-      setFile(e.target.files[0]);
+      dispatch({
+        type: ACTION_TYPES.SELECT_PICTURE,
+        payload: e.target.files[0],
+      });
     } else {
-      setErrorMessage(
-        'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.'
-      );
+      dispatch({
+        type: ACTION_TYPES.ERROR,
+        payload:
+          'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.',
+      });
     }
   };
 
-  const deleteImage = () => {
-    setPostPicture('');
-    setFile();
-    setErrorMessage('');
+  const deletePicture = () => {
+    dispatch({ type: ACTION_TYPES.DELETE_PICTURE });
   };
 
   return (
@@ -46,18 +40,27 @@ const CreateOrEditPost = ({
         id='text'
         rows='12'
         autoFocus
-        defaultValue={postText}
-        onFocus={() => setErrorMessage('')}
-        onChange={(e) => setPostText(e.target.value)}
+        defaultValue={state.postText}
+        onFocus={() => dispatch({ type: ACTION_TYPES.REMOVE_ERROR })}
+        onChange={(e) =>
+          dispatch({ type: ACTION_TYPES.EDIT_TEXT, payload: e.target.value })
+        }
       />
-      {postPicture && <StyledImgContainer><StyledNewPostImg src={postPicture} alt='' /></StyledImgContainer>}
+      {state.postPicture && (
+        <StyledImgContainer>
+          <StyledNewPostImg src={state.postPicture} alt='' />
+        </StyledImgContainer>
+      )}
       <StyledSelectImgButton
-        onClick={() => [fileInput.current.click(), setErrorMessage('')]}
+        onClick={() => [
+          fileInput.current.click(),
+          dispatch({ type: ACTION_TYPES.REMOVE_ERROR }),
+        ]}
       >
-        {postPicture ? "Modifier l'image" : 'Ajouter une image'}
+        {state.postPicture ? "Modifier l'image" : 'Ajouter une image'}
       </StyledSelectImgButton>
-      {postPicture && (
-        <StyledSelectImgButton onClick={deleteImage}>
+      {state.postPicture && (
+        <StyledSelectImgButton onClick={deletePicture}>
           Supprimer l'image
         </StyledSelectImgButton>
       )}
@@ -67,7 +70,9 @@ const CreateOrEditPost = ({
         ref={fileInput}
         onChange={(e) => handlePicture(e)}
       />
-      {errorMessage && <StyledErrorMessage>{errorMessage}</StyledErrorMessage>}
+      {state.errorMessage && (
+        <StyledErrorMessage>{state.errorMessage}</StyledErrorMessage>
+      )}
     </StyledNewPostContainer>
   );
 };

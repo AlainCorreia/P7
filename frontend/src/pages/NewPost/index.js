@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useReducer, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { postReducer } from '../../reducers/postReducer';
+import {
+  ACTION_TYPES,
+  MIME_TYPES,
+  NEW_POST_INITIAL_STATE,
+} from '../../utils/constants';
 import { api } from '../../utils/api';
-import { MIME_TYPES } from '../../utils/constants';
 
 import { StyledMainContainer, StyledButton } from './styles';
 
@@ -12,11 +17,10 @@ import CreateOrEditPost from '../../components/Posts/CreateOrEditPost/CreateOrEd
 
 const NewPost = () => {
   const { user, isLoading } = useContext(UserContext);
-  const [postText, setPostText] = useState('');
-  const [postPicture, setPostPicture] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [file, setFile] = useState();
+
   const navigate = useNavigate();
+
+  const [state, dispatch] = useReducer(postReducer, NEW_POST_INITIAL_STATE);
 
   useEffect(() => {
     if (!user.username && !isLoading) {
@@ -25,24 +29,29 @@ const NewPost = () => {
   }, [user.username, navigate, isLoading]);
 
   const handleSubmit = () => {
-    if (postText || file) {
+    if (state.postText || state.file) {
       const data = new FormData();
-      data.append('text', postText);
-      if (file) data.append('image', file);
+      data.append('text', state.postText);
+      if (state.file) data.append('image', state.file);
 
-      if (!file || MIME_TYPES[file.type]) {
+      if (!state.file || MIME_TYPES[state.file.type]) {
         api
           .post('posts', data)
           .then(() => navigate('/home'))
           .catch((err) => {
             if (err.response.data.message) {
-              setErrorMessage(err.response.data.message);
+              dispatch({
+                type: ACTION_TYPES.ERROR,
+                payload: err.response.data.message,
+              });
             }
           });
-      } else if (!MIME_TYPES[file.type]) {
-        setErrorMessage(
-          'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.'
-        );
+      } else if (!MIME_TYPES[state.file.type]) {
+        dispatch({
+          type: ACTION_TYPES.ERROR,
+          payload:
+            'Seuls les fichiers .jpeg, .jpg, .png, .webp, .gif sont autorisés.',
+        });
       }
     }
   };
@@ -53,16 +62,7 @@ const NewPost = () => {
     <>
       <Header page='newpost' />
       <StyledMainContainer>
-        <CreateOrEditPost
-          page='newpost'
-          postText={postText}
-          setPostText={setPostText}
-          postPicture={postPicture}
-          setPostPicture={setPostPicture}
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-          setFile={setFile}
-        />
+        <CreateOrEditPost page='newpost' state={state} dispatch={dispatch} />
         <StyledButton onClick={handleSubmit}>Envoyer</StyledButton>
       </StyledMainContainer>
     </>

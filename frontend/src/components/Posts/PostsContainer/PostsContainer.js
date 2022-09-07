@@ -52,7 +52,7 @@ const PostsContainer = () => {
 
   const handleScroll = (e) => {
     const { offsetHeight, scrollTop, scrollHeight } = e.target;
-    if (offsetHeight + scrollTop === scrollHeight) {
+    if (offsetHeight + scrollTop >= scrollHeight - 1) {
       setSkip(posts.length);
     }
   };
